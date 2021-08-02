@@ -1,0 +1,20 @@
+{
+  "name": "prisma-orm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^2.26.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.12.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "prisma": "^2.26.0"
+  }
+}
