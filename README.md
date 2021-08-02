@@ -2,7 +2,8 @@ https://www.youtube.com/watch?v=Ehv69qFvN2I&t=168s
 
 
 # How to start
-> npm run dev
+> npm run dev (nodemon)
+> npm run start (express)
 
 1. enter prisma database from terminal
 2. enter the database

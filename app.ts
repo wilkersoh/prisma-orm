@@ -1,7 +1,8 @@
-// import { PrismaClient } from "@prisma/client";
-const { PrismaClient } = require("@prisma/client");
-const express = require("express");
-const { body, validationResult } = require("express-validator"); // midleware
+// Typscript are suport use import and from
+import { PrismaClient } from "@prisma/client";
+import express, { NextFunction, Response, Request } from "express";
+
+import { body, validationResult } from "express-validator"; // midleware
 const prisma = new PrismaClient();
 
 const app = express();
@@ -20,7 +21,7 @@ const userValidationRules = [
     .withMessage(`Role must be one of 'ADMIN', 'USER', 'SUPERADMIN'`),
 ];
 
-const checkForErrors = (req, res, next) => {
+const checkForErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = simpleValidationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json(errors.mapped());
@@ -33,28 +34,33 @@ const simpleValidationResult = validationResult.withDefaults({
 });
 
 // Craete
-app.post("/users", userValidationRules, checkForErrors, async (req, res) => {
-  const { name, email, role } = req.body;
+app.post(
+  "/users",
+  userValidationRules,
+  checkForErrors,
+  async (req: Request, res: Response) => {
+    const { name, email, role } = req.body;
 
-  try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    try {
+      const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        role,
-      },
-    });
+      const user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          role,
+        },
+      });
 
-    return res.json(user);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(error);
+      return res.json(user);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+    }
   }
-});
+);
 // Read
-app.get("/users", async (req, res) => {
+app.get("/users", async (_: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -66,8 +72,8 @@ app.get("/users", async (req, res) => {
           select: {
             body: true,
             title: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -82,7 +88,7 @@ app.put(
   "/users/:uuid",
   userValidationRules,
   checkForErrors,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { name, email, role } = req.body;
     const uuid = req.params.uuid;
     try {
@@ -100,7 +106,7 @@ app.put(
   }
 );
 // Delete
-app.delete("/users/:uuid", async (req, res) => {
+app.delete("/users/:uuid", async (req: Request, res: Response) => {
   const uuid = req.params.uuid;
   try {
     await prisma.user.delete({ where: { uuid } });
@@ -111,7 +117,7 @@ app.delete("/users/:uuid", async (req, res) => {
   }
 });
 // Find
-app.get("/users/:uuid", async (req, res) => {
+app.get("/users/:uuid", async (req: Request, res: Response) => {
   const uuid = req.params.uuid;
   try {
     const user = await prisma.user.findUnique({ where: { uuid } });
@@ -127,25 +133,30 @@ const postValidationRules = [
 ];
 
 // Create a post
-app.post("/posts", postValidationRules, checkForErrors, async (req, res) => {
-  const { title, body, userUuid } = req.body;
+app.post(
+  "/posts",
+  postValidationRules,
+  checkForErrors,
+  async (req: Request, res: Response) => {
+    const { title, body, userUuid } = req.body;
 
-  try {
-    const post = await prisma.post.create({
-      data: {
-        title,
-        body,
-        user: { connect: { uuid: userUuid } },
-      },
-    });
+    try {
+      const post = await prisma.post.create({
+        data: {
+          title,
+          body,
+          user: { connect: { uuid: userUuid } },
+        },
+      });
 
-    return res.json(post);
-  } catch (error) {
-    return res.status(500).json(error);
+      return res.json(post);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   }
-});
+);
 // Read all posts
-app.get("/posts", async (req, res) => {
+app.get("/posts", async (_: Request, res: Response) => {
   try {
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
